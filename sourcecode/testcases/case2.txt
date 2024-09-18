@@ -1,0 +1,9 @@
+int main()
+{
+    int myInt = 0;
+
+    myInt++;
+    myInt << 1;
+
+    return 0;
+}
