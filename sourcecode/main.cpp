@@ -2,6 +2,8 @@
 #include<fstream>
 #include<sstream>
 #include<string>
+#include<vector>
+#include<utility>
 
 using namespace std;
 
@@ -45,11 +47,19 @@ void printWithWhitespaceSymbols(const string& str) {
 
 int main(int argc, char const *argv[])
 {
-    string content = fileReader("testcases/case2.txt");
+    //string content = fileReader("testcases/case2.txt");
 
     // printWithWhitespaceSymbols(content);
+    //cout << content << endl;
 
-    cout << content << endl;
+    vector<pair<string, string>> lexemeTokenPair = {
+        {"myInt", "int"}
+    };
+
+
+    for(int i = 0; i < lexemeTokenPair.size(); i++) {
+        cout << "Pair" << i + 1 << ": " << lexemeTokenPair[i].first << " ," << lexemeTokenPair[i].second << endl;
+    }
 
 
 
