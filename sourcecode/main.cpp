@@ -47,7 +47,7 @@ int main(int argc, char const *argv[])
 {
     string content = fileReader("testcases/case2.txt");
 
-    printWithWhitespaceSymbols(content);
+    // printWithWhitespaceSymbols(content);
 
     cout << content << endl;
 
