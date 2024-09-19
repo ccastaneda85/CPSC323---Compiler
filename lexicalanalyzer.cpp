@@ -84,11 +84,14 @@ void LexicalAnalyzer::inputToWords()
     int curr2 = 0;
     while (curr2 < input.size())
     {
+        //Check if word starts with white space and skips if necessary
         while (input[curr1] == ' ' || input[curr1] == '\n' || input[curr1] == '\t')
         {
             curr1++;
             curr2 = curr1;
         }
+        
+        //Checking if identifier or keyword
         if (isalpha(input[curr1]))
         {
             while (isalnum(input[curr2 + 1]))
@@ -98,15 +101,19 @@ void LexicalAnalyzer::inputToWords()
             word = input.substr(curr1, (1 + curr2 - curr1));
             curr1 = curr2 + 1;
         }
+        // Checking if number
         else if (isnumber(input[curr1]))
         {
+            //probably remove the or operator, because we are just checking lexemes, not syntactical analysis
             while (isnumber(input[curr2 + 1] || input[curr2 + 1] == '.'))
-            {
+            {   
                 curr2++;
             }
             word = input.substr(curr1, (curr2 - curr1));
             curr1 = curr2 + 1;
         }
+
+        //checking special case "double characters"
         else
         {
             if ((input.substr(curr1, 2)) == "++" || (input.substr(curr1, 2)) == "--" || (input.substr(curr1, 2)) ==  "<=" || (input.substr(curr1, 2)) == ">=" || (input.substr(curr1, 2)) == "==" || (input.substr(curr1, 2)) == "&&" || (input.substr(curr1, 2)) == "||")
@@ -115,6 +122,7 @@ void LexicalAnalyzer::inputToWords()
                 curr1 += 2;
                 curr2 = curr1;
             }
+            // Checking all other cases, such as single character token/lexemes. 
             else
             {
                 word = input.substr(curr1, 1);
@@ -122,6 +130,11 @@ void LexicalAnalyzer::inputToWords()
                 curr2 = curr1;
             }
         }
+
+        
+        //before pushing the word into the vector, check to see if it is a keyword. ☝️🤓
+        // put the table in here
+
         if (word.length() > 0)
         {
             argWords.push_back(word);
