@@ -2,6 +2,7 @@ int main()
 {
 int myResult1 = 0;
 int arraySize = 5;
+int someNumber = 123456789;
 int myArray[arraySize] = {1,2,3,4,5};
 // this is a for loop
 for (int i = 0; i < arraySize; ++i)
