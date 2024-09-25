@@ -36,9 +36,9 @@ int lex();
 
 /******************************************************/
 /* main driver */
-main() {
+int main() {
 /* Open the input data file and process its contents */
-    if ((in_fp = fopen("front.in", "r")) == NULL)
+    if ((in_fp = fopen("testcases/case2.txt", "r")) == NULL)
         printf("ERROR - cannot open front.in \n");
     else {
         
@@ -54,37 +54,37 @@ main() {
 /* lookup - a function to lookup operators and parentheses
 and return the token */
 int lookup(char ch) {
-switch (ch) {
-case '(':
-addChar();
-nextToken = LEFT_PAREN;
-break;
-case ')':
-addChar();
-nextToken = RIGHT_PAREN;
-break;
-case '+':
-addChar();
-nextToken = ADD_OP;
-break;
-case '-':
-addChar();
-nextToken = SUB_OP;
-break;
-case '*':
-addChar();
-nextToken = MULT_OP;
-break;
-case '/':
-addChar();
-nextToken = DIV_OP;
-break;
-default:
-addChar();
-nextToken = EOF;
-break;
-}
-return nextToken;
+    switch (ch) {
+        case '(':
+        addChar();
+        nextToken = LEFT_PAREN;
+        break;
+        case ')':
+        addChar();
+        nextToken = RIGHT_PAREN;
+        break;
+        case '+':
+        addChar();
+        nextToken = ADD_OP;
+        break;
+        case '-':
+        addChar();
+        nextToken = SUB_OP;
+        break;
+        case '*':
+        addChar();
+        nextToken = MULT_OP;
+        break;
+        case '/':
+        addChar();
+        nextToken = DIV_OP;
+        break;
+        default:
+        addChar();
+        nextToken = EOF;
+        break;
+    }
+    return nextToken;
 }
 /*****************************************************/
 /* addChar - a function to add nextChar to lexeme */
