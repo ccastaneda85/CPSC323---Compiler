@@ -55,7 +55,10 @@ int main()
     // string input = "int main(){ \n myNum7 = getNum(0);\nfor (int i = 0; i <= 7; i++)\nreturn 0;\n}";
 
     // TAKING TXT FILE AS INPUT INSTEAD OF A STRING:
-    string lexemeStream = txtToString("testcases/case4.txt"); // Replace "input.txt" with your file name
+    string input;
+    cout << "Input the test filepath. Example input: testcases/case1.txt" << endl << "Filepath: ";
+    cin >> input;
+    string lexemeStream = txtToString(input); // Replace "input.txt" with your file name
     LexicalAnalyzer test = LexicalAnalyzer(lexemeStream);
     return 0;
 }
@@ -94,6 +97,7 @@ void LexicalAnalyzer::generateDefinedTokens()
     cppTokenMap["|"] = "bitOr";
 
     // keyword tokens
+    /*
     cppTokenMap["int"] = "int";
     cppTokenMap["return"] = "return";
     cppTokenMap["if"] = "if";
@@ -110,6 +114,7 @@ void LexicalAnalyzer::generateDefinedTokens()
     cppTokenMap["break"] = "break";
     cppTokenMap["continue"] = "continue";
     cppTokenMap["void"] = "void";
+    */
 };
 
 LexicalAnalyzer::LexicalAnalyzer(string argLexemeStream)
@@ -146,7 +151,7 @@ void LexicalAnalyzer::lexemeStreamTo2DTokenVec(string argLexemeStream)
             curr1++;
             curr2 = curr1;
         }
-        if (row >= tokenStream.size() && curr2 != argLexemeStream.size()) {
+        while (row >= tokenStream.size() && curr2 != argLexemeStream.size()) {
         tokenStream.push_back(vector<Token>());  // Add a new row
         }
 	// checking if the first letter of the current word, curr1 is a letter. if it is, it must be either a keyword or an identifier.
@@ -250,4 +255,4 @@ void LexicalAnalyzer::printTokenStream(){
         for (int c = 0; c<tokenStream[r].size(); c++)
         cout << tokenStream[r][c].type << " -> " << tokenStream[r][c].value << endl;
     }
-}
+    }
