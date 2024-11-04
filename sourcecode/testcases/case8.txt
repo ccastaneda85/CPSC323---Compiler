@@ -1,0 +1,5 @@
+{
+    int zero;
+    zero = 1;
+    return 0;
+}

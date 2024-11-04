@@ -1,0 +1,6 @@
+int main()
+{
+    int myInt = 1;
+    if (myInt > 1 { myInt = myInt + 1; }
+    return 0;
+}
