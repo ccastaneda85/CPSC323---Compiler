@@ -1,0 +1,250 @@
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "lexicalAnalyzer.cpp"
+
+class Parser {
+ public:
+  Parser(LexicalAnalyzer& lexer) : lexer(lexer), position(0) {
+    tokens = flattenTokenStream(lexer.getTokenStream());
+  }
+
+  int parse() {
+    return parseProgram() && expectToken("EOF");  // End of file
+  }
+
+ private:
+  LexicalAnalyzer& lexer;
+  std::vector<Token> tokens;
+  int position;
+
+  //  2D to 1D
+  std::vector<Token> flattenTokenStream(
+      const std::vector<std::vector<Token>>& tokenStream) {
+    std::vector<Token> flatStream;
+    for (const auto& line : tokenStream) {
+      for (const auto& token : line) {
+        flatStream.push_back(token);
+      }
+    }
+    return flatStream;
+  }
+
+  Token scanToken() {
+    if (position < tokens.size()) {
+      return tokens[position++];
+    } else {
+      return Token("EOF", "");  // Sign
+    }
+  }
+
+  void putBackToken() {
+    if (position > 0) {
+      --position;
+    }
+  }
+
+  int expectToken(const std::string& expectedType) {
+    if (currentToken().type == expectedType) {
+      scanToken();
+      return 1;
+    } else {
+      std::cerr << "Syntax Error: Expected token " << expectedType
+                << ", but found " << currentToken().type << " instead.\n";
+      return 0;
+    }
+  }
+
+  Token currentToken() {
+    if (position < tokens.size()) {
+      return tokens[position];
+    } else {
+      return Token("EOF", "");
+    }
+  }
+
+  // Grammar
+  int parseProgram() {
+    return expectToken("basic") && expectToken("main") && expectToken("(") &&
+           expectToken(")") && parseBlock();
+  }
+
+  int parseBlock() {
+    if (expectToken("{")) {
+      parseDecls();
+      parseStmts();
+      return expectToken("}");
+    }
+    return 0;
+  }
+
+  void parseDecls() {
+    while (currentToken().type == "basic") {
+      parseDecl();
+    }
+  }
+
+  int parseDecl() {
+    return parseType() && expectToken("identifier") && expectToken(";");
+  }
+
+  int parseType() {
+    if (expectToken("basic")) {
+      while (currentToken().type == "number") {
+        scanToken();
+        if (expectToken("]")) {
+          break;
+        }
+      }
+      return 1;
+    }
+    return 0;
+  }
+
+  void parseStmts() {
+    while (currentToken().type != "}") {
+      parseStmt();
+    }
+  }
+
+  int parseStmt() {
+    if (currentToken().type == "identifier") {
+      expectToken("identifier");
+      expectToken("=");
+      parseBool();
+      return expectToken(";");
+    } else if (expectToken("if")) {
+      expectToken("(");
+      parseBool();
+      expectToken(")");
+      parseStmt();
+      if (currentToken().type == "else") {
+        scanToken();
+        parseStmt();
+      }
+      return 1;
+    } else if (expectToken("while")) {
+      expectToken("(");
+      parseBool();
+      expectToken(")");
+      parseStmt();
+      return 1;
+    } else if (expectToken("do")) {
+      parseStmt();
+      expectToken("while");
+      expectToken("(");
+      parseBool();
+      expectToken(";");
+      return 1;
+    } else if (expectToken("break")) {
+      return expectToken(";");
+    } else if (expectToken("return")) {
+      expectToken("number");
+      return expectToken(";");
+    } else if (currentToken().type == "{") {
+      return parseBlock();
+    }
+    std::cerr << "Parse error: unexpected token " << currentToken().type
+              << "\n";
+    return 0;
+  }
+
+  int parseLoc() {
+    if (expectToken("identifier")) {
+      while (expectToken("[")) {
+        parseBool();
+        expectToken("]");
+      }
+      return 1;
+    }
+    return 0;
+  }
+
+  int parseBool() {
+    parseJoin();
+    while (currentToken().type == "||") {
+      scanToken();
+      parseJoin();
+    }
+    return 1;
+  }
+
+  int parseJoin() {
+    parseEquality();
+    while (currentToken().type == "&&") {
+      scanToken();
+      parseEquality();
+    }
+    return 1;
+  }
+
+  int parseEquality() {
+    parseRel();
+    while (currentToken().type == "==" || currentToken().type == "!=") {
+      scanToken();
+      parseRel();
+    }
+    return 1;
+  }
+
+  int parseRel() {
+    parseExpr();
+    if (currentToken().type == "<" || currentToken().type == "<=" ||
+        currentToken().type == ">=" || currentToken().type == ">") {
+      scanToken();
+      parseExpr();
+    }
+    return 1;
+  }
+
+  int parseExpr() {
+    parseTerm();
+    while (currentToken().type == "+" || currentToken().type == "-") {
+      scanToken();
+      parseTerm();
+    }
+    return 1;
+  }
+
+  int parseTerm() {
+    parseUnary();
+    while (currentToken().type == "*" || currentToken().type == "/") {
+      scanToken();
+      parseUnary();
+    }
+    return 1;
+  }
+
+  int parseUnary() {
+    if (currentToken().type == "!") {
+      scanToken();
+      parseUnary();
+      return 1;
+    } else if (currentToken().type == "-") {
+      scanToken();
+      parseUnary();
+      return 1;
+    }
+    return parseFactor();
+  }
+
+  int parseFactor() {
+    if (currentToken().type == "(") {
+      scanToken();
+      parseBool();
+      return expectToken(")");
+    } else if (currentToken().type == "identifier") {
+      return parseLoc();
+    } else if (currentToken().type == "number" ||
+               currentToken().type == "real" || currentToken().type == "true" ||
+               currentToken().type == "false") {
+      scanToken();
+      return 1;
+    }
+    std::cerr << "Parse error: unexpected token " << currentToken().type
+              << "\n";
+    return 0;
+  }
+};
