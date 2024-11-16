@@ -1,0 +1,12 @@
+int main(void)
+{
+float myFloat = 0.01;
+int counter = 0;
+while (counter < 5)
+{
+++counter;
+myFloat = myFloat * 3;
+}
+counter > myFloat;
+return 0;
+}
