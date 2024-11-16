@@ -1,6 +1,0 @@
-int main()
-{
-int 1stint= 0;;
-charmyChar2;
-return0;
-}
