@@ -1,4 +1,4 @@
-#include<iostream>
+#include <iostream>
 #include "utilities.h"
 #include "lexicalanalyzer.h"
 #include <fstream>
@@ -6,13 +6,13 @@
 #include "parser.h"
 using namespace std;
 
+int main(int argc, char const *argv[])
+{
 
-int main(int argc, char const *argv[]) {
-    
-    string testString = fileReader("testcases/case2.txt");
+    string testString = fileReader("testcases/p2case5.txt");
     vector<Token> TokenStream;
     TokenStream = lexicalAnalyzer(testString);
-    
+
     // for(auto items: TokenStream) {
     //     cout << items.getType() << " ";
     // }
